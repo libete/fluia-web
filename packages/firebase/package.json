@@ -1,0 +1,45 @@
+{
+  "name": "@fluia/firebase",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.js",
+      "types": "./dist/client.d.ts"
+    },
+    "./admin": {
+      "import": "./dist/admin.mjs",
+      "require": "./dist/admin.js",
+      "types": "./dist/admin.d.ts"
+    },
+    "./auth": {
+      "import": "./dist/auth.mjs",
+      "require": "./dist/auth.js",
+      "types": "./dist/auth.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "firebase": "^11.1.0",
+    "firebase-admin": "^13.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

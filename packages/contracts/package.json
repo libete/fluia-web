@@ -1,0 +1,40 @@
+{
+  "name": "@fluia/contracts",
+  "version": "1.0.0",
+  "description": "FLUIA - Contratos e tipos TypeScript (fonte única de verdade tipada)",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5.7.2",
+    "rimraf": "^5.0.0"
+  },
+  "keywords": [
+    "fluia",
+    "contracts",
+    "types",
+    "typescript"
+  ],
+  "author": "FLUIA",
+  "license": "UNLICENSED",
+  "private": true
+}

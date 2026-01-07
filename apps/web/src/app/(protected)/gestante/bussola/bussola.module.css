@@ -1,11 +1,20 @@
 .container {
   min-height: 100vh;
-  background: var(--color-background);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-app) 0%,
+    #FBF6F2 100%
+  );
 }
 
+/* ============================================
+   HEADER
+   ============================================ */
+
 .header {
-  background: white;
-  border-bottom: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(155, 141, 211, 0.12);
   padding: 1rem;
   position: sticky;
   top: 0;
@@ -22,12 +31,12 @@
 
 .greeting {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text);
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 .week {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
   margin-top: 0.25rem;
 }
@@ -36,16 +45,20 @@
   padding: 0.5rem 1rem;
   background: transparent;
   color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border: 1px solid rgba(155, 141, 211, 0.2);
+  border-radius: 9999px;
   font-size: 0.875rem;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .logoutButton:hover {
-  background: #f9fafb;
-  color: var(--color-text);
+  background: rgba(155, 141, 211, 0.08);
+  color: var(--color-primary-500);
 }
+
+/* ============================================
+   MAIN
+   ============================================ */
 
 .main {
   max-width: 600px;
@@ -56,17 +69,27 @@
   gap: 1.5rem;
 }
 
+/* ============================================
+   ACTION CARD (CHECK-IN)
+   ============================================ */
+
 .actionCard {
-  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  background: linear-gradient(
+    135deg,
+    #9B8DD3 0%,
+    #B9A7EE 100%
+  );
   border-radius: 20px;
   padding: 2rem;
   text-align: center;
   color: white;
+  box-shadow: 0 8px 24px rgba(155, 141, 211, 0.25);
 }
 
 .actionIcon {
-  font-size: 3rem;
+  font-size: 2.75rem;
   margin-bottom: 1rem;
+  opacity: 0.95;
 }
 
 .actionTitle {
@@ -76,37 +99,46 @@
 }
 
 .actionDescription {
-  font-size: 1rem;
+  font-size: 0.95rem;
   opacity: 0.9;
   margin-bottom: 1.5rem;
+  line-height: 1.5;
 }
 
 .actionButton {
   padding: 0.875rem 2rem;
   background: white;
-  color: var(--color-primary);
-  border-radius: 12px;
+  color: var(--color-primary-500);
+  border-radius: 9999px;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .actionButton:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(45, 42, 62, 0.15);
 }
 
+/* ============================================
+   STATUS CARD
+   ============================================ */
+
 .statusCard {
-  background: white;
+  background: linear-gradient(
+    180deg,
+    #FFFFFF 0%,
+    #FCFAF8 100%
+  );
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(45, 42, 62, 0.05);
 }
 
 .statusTitle {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   margin-bottom: 1rem;
 }
 
@@ -121,8 +153,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  border-radius: 10px;
-  transition: background 0.2s;
+  border-radius: 12px;
+  transition: background 0.2s ease;
 }
 
 .statusIcon {
@@ -135,12 +167,14 @@
 }
 
 .statusLabel {
-  font-size: 0.95rem;
-  color: var(--color-text);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
 }
 
+/* Estados */
+
 .statusItem.done {
-  background: #ecfdf5;
+  background: rgba(109, 205, 197, 0.12);
 }
 
 .statusItem.done .statusIcon {
@@ -148,25 +182,29 @@
 }
 
 .statusItem.current {
-  background: #f5f3ff;
+  background: rgba(155, 141, 211, 0.12);
 }
 
 .statusItem.current .statusIcon {
-  color: var(--color-primary);
+  color: var(--color-primary-500);
 }
 
 .statusItem.current .statusLabel {
   font-weight: 500;
-  color: var(--color-primary);
+  color: var(--color-primary-600);
 }
 
 .statusItem.pending {
-  opacity: 0.6;
+  opacity: 0.55;
 }
+
+/* ============================================
+   DEBUG
+   ============================================ */
 
 .debugInfo {
   padding: 1rem;
-  background: #f9fafb;
+  background: rgba(45, 42, 62, 0.04);
   border-radius: 8px;
   font-size: 0.75rem;
   color: var(--color-text-muted);

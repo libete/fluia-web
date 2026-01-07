@@ -1,6 +1,6 @@
 /**
  * @fluia/contracts - Shared Types
- * 
+ *
  * Tipos fundamentais usados em todo o sistema.
  * Fonte única de verdade tipada.
  */
@@ -19,12 +19,31 @@ export type ISOTimestamp = string;
 export type DateKey = string;
 
 // ============================================
+// CONSTANTES TEMPORAIS
+// ============================================
+
+/**
+ * Hora de corte do dia na FLUIA.
+ *
+ * O "dia" começa às 4h da manhã para acomodar:
+ * - Gestantes com insônia que fazem check-in tarde
+ * - Treinos completados de madrugada
+ * - Padrão da indústria (Duolingo, Fitbit, etc.)
+ */
+export const DAY_START_HOUR = 4;
+
+/**
+ * Timezone padrão do sistema.
+ */
+export const DEFAULT_TIMEZONE = "America/Sao_Paulo";
+
+// ============================================
 // ZONAS EMOCIONAIS
 // ============================================
 
 /**
  * Zona emocional derivada das métricas.
- * 
+ *
  * REGRA ÉTICA: Usuária NUNCA vê números.
  * Apenas zonas são comunicadas externamente.
  */
@@ -36,9 +55,9 @@ export type Zone = "baixa" | "intermediaria" | "fortalecida";
 
 /**
  * Chaves das 4 métricas centrais da FLUIA.
- * 
+ *
  * - RE: Regulação Emocional
- * - BS: Base de Segurança  
+ * - BS: Base de Segurança
  * - RS: Resiliência ao Estresse
  * - CA: Conexão Afetiva
  */
@@ -61,11 +80,11 @@ export const METRIC_LABELS: Record<MetricKey, string> = {
 
 /**
  * Valor da escala de 5 níveis.
- * 
+ *
  * Baseado em estudos de Daniel Kahneman:
  * Decisão mais assertiva com níveis de risco (baixo/médio/alto)
  * expandido para 5 níveis com intermediários.
- * 
+ *
  * Mapeamento interno para zonas:
  * - 1-2 → baixa
  * - 3   → intermediaria
@@ -82,7 +101,7 @@ export type NullableScaleValue = ScaleValue | null;
 
 /**
  * Contexto emocional consolidado do dia.
- * 
+ *
  * Determina comportamento das engines:
  * - fragile: Bloqueia L3/L4, apenas cuidado básico
  * - neutral: Comportamento padrão
@@ -111,7 +130,7 @@ export type DayMoment = "morning" | "afternoon" | "evening" | "night";
 export type GestationalTrimester = 1 | 2 | 3;
 
 // ============================================
-// HELPERS
+// HELPERS - ZONAS E CONTEXTO
 // ============================================
 
 /**
@@ -128,4 +147,76 @@ export function scaleValueToZone(value: ScaleValue): Zone {
  */
 export function canShowHighLevelOutputs(context: EmotionalContext): boolean {
   return context !== "fragile";
+}
+
+// ============================================
+// HELPERS - DATA E TEMPO
+// ============================================
+
+/**
+ * Retorna a data-chave no formato YYYY-MM-DD.
+ *
+ * IMPORTANTE: O dia começa às 4h da manhã.
+ * - 03:59 = ainda é "ontem"
+ * - 04:00 = já é "hoje"
+ *
+ * @param timezone - Timezone do usuário (default: America/Sao_Paulo)
+ * @param date - Data específica (default: agora)
+ * @returns DateKey no formato YYYY-MM-DD
+ */
+export function getDateKey(
+  timezone: string = DEFAULT_TIMEZONE,
+  date?: Date
+): DateKey {
+  const now = date || new Date();
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(now);
+  const year = parts.find((p) => p.type === "year")?.value;
+  const month = parts.find((p) => p.type === "month")?.value;
+  const day = parts.find((p) => p.type === "day")?.value;
+  const hour = parseInt(parts.find((p) => p.type === "hour")?.value || "12");
+
+  // Se for antes das 4h, considera como dia anterior
+  if (hour < DAY_START_HOUR) {
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yFormatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return yFormatter.format(yesterday);
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Verifica se uma dateKey é de hoje.
+ *
+ * @param dateKey - Data no formato YYYY-MM-DD
+ * @param timezone - Timezone do usuário
+ * @returns true se for o dia atual
+ */
+export function isToday(
+  dateKey: DateKey,
+  timezone: string = DEFAULT_TIMEZONE
+): boolean {
+  return dateKey === getDateKey(timezone);
+}
+
+/**
+ * Retorna timestamp ISO atual.
+ */
+export function nowISO(): ISOTimestamp {
+  return new Date().toISOString();
 }

@@ -34,9 +34,14 @@ export {
   updateUserProfile,
   touchUserProfile,
   getOrCreateUserProfile,
-  getDateKey,
   calculateGestationalWeek,
 } from "./auth";
+
+// Re-export getDateKey from contracts (centralizado)
+export { getDateKey } from "@fluia/contracts";
+
+// Re-export Timestamp para uso em API routes
+export { Timestamp } from "firebase-admin/firestore";
 
 // Types
 export type { UserProfile, SessionUser } from "./auth";

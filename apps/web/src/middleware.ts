@@ -3,8 +3,8 @@
  *
  * Protege rotas /gestante/* verificando cookie de sessão.
  * Redireciona para /entrar se não autenticado.
+ * Passa pathname via header para o layout verificar onboarding.
  */
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -12,16 +12,10 @@ import type { NextRequest } from "next/server";
 const SESSION_COOKIE_NAME = "__session";
 
 // Rotas públicas (não precisam de autenticação)
-const PUBLIC_ROUTES = [
-  "/entrar",
-  "/api/auth/session",
-  "/__/auth",
-];
+const PUBLIC_ROUTES = ["/entrar", "/api/auth/session", "/__/auth"];
 
 // Rotas que precisam de autenticação
-const PROTECTED_PREFIXES = [
-  "/gestante",
-];
+const PROTECTED_PREFIXES = ["/gestante"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -59,28 +53,25 @@ export function middleware(request: NextRequest) {
   if (!sessionCookie?.value) {
     // Não autenticado - redireciona para /entrar
     const loginUrl = new URL("/entrar", request.url);
-
     // Preserva a URL de destino para redirect pós-login
     loginUrl.searchParams.set("redirect", pathname);
-
     return NextResponse.redirect(loginUrl);
   }
 
   // Autenticado - permite acesso
-  // Nota: Validação completa do cookie é feita no servidor (SSR guard)
-  return NextResponse.next();
+  // Adiciona pathname no header para o layout verificar onboarding
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {
-  // Matcher para rotas que o middleware deve processar
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\..*|_next).*)",
   ],
 };

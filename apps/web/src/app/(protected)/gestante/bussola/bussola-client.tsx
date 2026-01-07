@@ -28,6 +28,11 @@ export default function BussolaClient({
     router.replace("/entrar");
   }
 
+  // Navegação para o check-in
+  function handleCheckin() {
+    router.push("/gestante/checkin");
+  }
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -54,7 +59,10 @@ export default function BussolaClient({
           <p className={styles.actionDescription}>
             Vamos começar o dia com um check-in emocional?
           </p>
-          <button className={styles.actionButton}>
+          <button 
+            className={styles.actionButton}
+            onClick={handleCheckin}
+          >
             Fazer Check-in
           </button>
         </div>

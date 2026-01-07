@@ -1,12 +1,13 @@
 /**
  * @fluia/firebase - Auth Module
  *
- * Funções de autenticação, perfil e sessão.
- * Combina Admin SDK com lógica de negócio FLUIA.
+ * FunÃƒÂ§ÃƒÂµes de autenticaÃƒÂ§ÃƒÂ£o, perfil e sessÃƒÂ£o.
+ * Combina Admin SDK com lÃƒÂ³gica de negÃƒÂ³cio FLUIA.
  */
 
 import { getAdminAuth, getAdminFirestore, verifySessionCookie } from "./admin";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
+import { getDateKey } from "@fluia/contracts";
 
 // ============================================
 // Tipos
@@ -62,8 +63,8 @@ const DEFAULT_LOCALE = "pt-BR";
 // ============================================
 
 /**
- * Obtém o perfil do usuário.
- * Retorna null se não existir.
+ * ObtÃƒÂ©m o perfil do usuÃƒÂ¡rio.
+ * Retorna null se nÃƒÂ£o existir.
  */
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   const db = getAdminFirestore();
@@ -77,8 +78,8 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 }
 
 /**
- * Cria o perfil base do usuário após primeiro login.
- * Não sobrescreve se já existir.
+ * Cria o perfil base do usuÃƒÂ¡rio apÃƒÂ³s primeiro login.
+ * NÃƒÂ£o sobrescreve se jÃƒÂ¡ existir.
  */
 export async function createUserProfile(
   uid: string,
@@ -106,7 +107,7 @@ export async function createUserProfile(
     onboardingCompleted: false,
     onboardingStep: 0,
 
-    // Dados gestacionais (null até onboarding)
+    // Dados gestacionais (null atÃƒÂ© onboarding)
     dueDate: null,
     gestationalWeekAtCreation: null,
     isFirstPregnancy: null,
@@ -165,7 +166,7 @@ export async function touchUserProfile(uid: string, timezone?: string): Promise<
 }
 
 /**
- * Obtém ou cria o perfil do usuário.
+ * ObtÃƒÂ©m ou cria o perfil do usuÃƒÂ¡rio.
  * Usa dados do Firebase Auth se precisar criar.
  */
 export async function getOrCreateUserProfile(
@@ -180,7 +181,7 @@ export async function getOrCreateUserProfile(
   let profile = await getUserProfile(uid);
 
   if (!profile) {
-    // Se não temos authData, buscar do Firebase Auth
+    // Se nÃƒÂ£o temos authData, buscar do Firebase Auth
     if (!authData) {
       const auth = getAdminAuth();
       const userRecord = await auth.getUser(uid);
@@ -206,48 +207,7 @@ export async function getOrCreateUserProfile(
 // Helpers
 // ============================================
 
-/**
- * Retorna a data no formato YYYY-MM-DD para o timezone especificado.
- * Considera o reset às 04:00 (padrão FLUIA).
- */
-export function getDateKey(timezone: string): string {
-  const now = new Date();
-
-  // Ajusta para o timezone
-  const options: Intl.DateTimeFormatOptions = {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    hour12: false,
-  };
-
-  const formatter = new Intl.DateTimeFormat("en-CA", options);
-  const parts = formatter.formatToParts(now);
-
-  const year = parts.find((p) => p.type === "year")?.value;
-  const month = parts.find((p) => p.type === "month")?.value;
-  const day = parts.find((p) => p.type === "day")?.value;
-  const hour = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
-
-  // Se antes das 04:00, considera como dia anterior
-  if (hour < 4) {
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    const yFormatter = new Intl.DateTimeFormat("en-CA", {
-      timeZone: timezone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-
-    return yFormatter.format(yesterday);
-  }
-
-  return `${year}-${month}-${day}`;
-}
+// getDateKey importado de @fluia/contracts
 
 /**
  * Calcula a semana gestacional a partir da DPP.
@@ -262,7 +222,7 @@ export function calculateGestationalWeek(dueDate: Date): number {
   );
   const weeksUntilDue = Math.floor(daysUntilDue / 7);
 
-  // Gestação normal = 40 semanas
+  // GestaÃƒÂ§ÃƒÂ£o normal = 40 semanas
   const currentWeek = 40 - weeksUntilDue;
 
   // Clamp entre 1 e 42 semanas

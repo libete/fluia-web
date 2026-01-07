@@ -12,5 +12,5 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ["firebase", "firebase-admin"],
+  external: ["firebase", "firebase-admin", "@fluia/contracts"],
 });

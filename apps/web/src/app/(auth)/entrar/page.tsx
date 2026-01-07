@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { loginWithGoogle, handleRedirectResult } from "@fluia/firebase/client";
 import styles from "./entrar.module.css";
 
 type PageState = "idle" | "processing" | "redirecting" | "error";
 
-export default function EntrarPage() {
+function EntrarPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [state, setState] = useState<PageState>("idle");
@@ -60,8 +60,29 @@ export default function EntrarPage() {
     try {
       setError(null);
       setState("processing");
-      await loginWithGoogle();
-      // Nota: signInWithRedirect não retorna, a página recarrega
+      
+      // loginWithGoogle retorna idToken se Popup, null se Redirect
+      const idToken = await loginWithGoogle();
+      
+      if (idToken) {
+        // Popup: criar sessão imediatamente
+        const response = await fetch("/api/auth/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || "Falha ao criar sessão");
+        }
+
+        setState("redirecting");
+        const redirectTo = searchParams.get("redirect") || "/gestante/bussola";
+        router.replace(redirectTo);
+      }
+      // Se Redirect, a página vai recarregar e processar em useEffect
     } catch (err) {
       console.error("[Entrar] Error starting login:", err);
       setError(err instanceof Error ? err.message : "Erro ao iniciar login");
@@ -133,6 +154,29 @@ export default function EntrarPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function EntrarPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <h1 className={styles.logo}>FLUIA</h1>
+            <p className={styles.subtitle}>Bússola Gestante</p>
+          </div>
+          <div className={styles.content}>
+            <div className={styles.loading}>
+              <div className={styles.spinner} />
+              <p>Carregando...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <EntrarPageContent />
+    </Suspense>
   );
 }
 

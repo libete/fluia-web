@@ -3,15 +3,14 @@
  *
  * Salva dados do onboarding incrementalmente.
  */
-
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import {
   verifySessionCookie,
   updateUserProfile,
   calculateGestationalWeek,
+  Timestamp,
 } from "@fluia/firebase";
-import { Timestamp } from "firebase-admin/firestore";
 
 const SESSION_COOKIE_NAME = "__session";
 

@@ -9,6 +9,7 @@ import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import {
   getAuth,
   signInWithRedirect,
+  signInWithPopup,
   getRedirectResult,
   signOut as firebaseSignOut,
   GoogleAuthProvider,
@@ -72,18 +73,37 @@ export function getClientFirestore(): Firestore {
 }
 
 // ============================================
-// Autenticação - Google Redirect
+// Autenticação - Google
 // ============================================
 
 const googleProvider = new GoogleAuthProvider();
 
 /**
- * Inicia o fluxo de login com Google via Redirect.
- * Redirect é mais confiável que Popup em todos os ambientes.
+ * Inicia o fluxo de login com Google.
+ * Usa Popup em desenvolvimento (mais simples) e Redirect em produção (mais confiável).
+ * Retorna o idToken se Popup, ou null se Redirect (token vem depois via handleRedirectResult).
  */
-export async function loginWithGoogle(): Promise<void> {
+export async function loginWithGoogle(): Promise<string | null> {
   const auth = getClientAuth();
+  
+  // Em desenvolvimento, usar Popup (evita problema do init.json)
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      if (result?.user) {
+        const idToken = await result.user.getIdToken(true);
+        return idToken;
+      }
+      return null;
+    } catch (error) {
+      console.error("[Firebase Client] Popup login error:", error);
+      throw error;
+    }
+  }
+  
+  // Em produção, usar Redirect (mais confiável)
   await signInWithRedirect(auth, googleProvider);
+  return null;
 }
 
 /**

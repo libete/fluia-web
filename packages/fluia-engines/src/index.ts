@@ -14,7 +14,7 @@
  */
 
 // ============================================
-// BABY VOICE ENGINE
+// BABY VOICE ENGINE (v2.0)
 // ============================================
 export {
   generateBabyVoiceMessage,
@@ -22,7 +22,11 @@ export {
   countPossibleCombinations,
   getContentStats,
   generatePreviewMessage,
+  isMilestoneAvailable,
+  getAvailableMilestones,
 } from "./baby-voice-engine";
+
+export type { BabyVoiceOutputV2 } from "./baby-voice-engine";
 
 // ============================================
 // EMOTIONAL STATE ENGINE
@@ -35,9 +39,33 @@ export * from "./emotional-state-engine";
 export * from "./metrics-engine";
 
 // ============================================
-// PRESCRIPTION ENGINE
+// PRESCRIPTION ENGINE (v2.0)
 // ============================================
-export * from "./prescription-engine";
+export {
+  generatePrescription,
+  getTotalDuration,
+  isMicroPrescription,
+  getTrainingTypeLabel,
+  getToneLabel,
+  getTrainingById,
+  getTrainingInstructions,
+  getAllTrainings,
+  getCatalogStats,
+} from "./prescription-engine";
+
+export type {
+  TrainingType,
+  TrainingIntensity,
+  PrescriptionTone,
+  MetricKey,
+  Zone,
+  Metrics,
+  TrainingPrescription,
+  DailyPrescription,
+  PrescriptionInput,
+  ProblemType,
+  DetectedProblem,
+} from "./prescription-engine";
 
 // ============================================
 // THERMOMETERS ENGINE
@@ -143,24 +171,19 @@ export {
   calculateDaysSinceBirth,
   calculateWeeksSinceBirth,
   determinePhase,
-
   // Transição
   createInitialTransitionState,
   generateWelcomeMessage,
-
   // Diário
   selectPostpartumPrompt,
   getAlternativePostpartumPrompts,
   POSTPARTUM_DIARY_PROMPTS,
-
   // Check-in
   generateCheckinMessage,
   suggestPractice,
   generateCheckinInsights,
-
   // Screening
   evaluatePPDRisk,
-
   // Constantes
   PHASE_DAYS,
   PHASE_NAMES,

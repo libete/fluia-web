@@ -41,9 +41,15 @@ export {
   type GestationalTrimester,
   // Constants
   METRIC_LABELS,
-  // Helpers
+  DAY_START_HOUR,
+  DEFAULT_TIMEZONE,
+  // Helpers - Zonas
   scaleValueToZone,
   canShowHighLevelOutputs,
+  // Helpers - Data
+  getDateKey,
+  isToday,
+  nowISO,
 } from "./shared";
 
 // ============================================
@@ -304,7 +310,7 @@ export {
 
 // ============================================
 // INTERPRETATION (v1.0 — LONGITUDINAL)
-// 
+//
 // NOTA: Tipos com nomes únicos para evitar conflito
 // com emotional-state (TrendDirection) e reports (MonthlyStats)
 // ============================================

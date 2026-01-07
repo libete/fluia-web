@@ -101,7 +101,6 @@ export function getAdminFirestore(): Firestore {
   }
   return _adminDb;
 }
-
 // ============================================
 // Sessão - Criação e Verificação
 // ============================================
@@ -110,11 +109,16 @@ export function getAdminFirestore(): Firestore {
  * Duração da sessão em milissegundos.
  * Default: 90 dias (padrão FLUIA)
  */
-const SESSION_DURATION_DAYS = parseInt(
-  process.env.SESSION_MAX_AGE_DAYS || "90",
-  10
-);
-const SESSION_DURATION_MS = SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000;
+const SESSION_DURATION_MS = (() => {
+  const days = Number(process.env.SESSION_MAX_AGE_DAYS ?? 7);
+  const ms = days * 24 * 60 * 60 * 1000;
+
+  // Firebase: mínimo 5 min, máximo 14 dias
+  return Math.min(
+    Math.max(ms, 5 * 60 * 1000),
+    14 * 24 * 60 * 60 * 1000
+  );
+})();
 
 /**
  * Cria um session cookie a partir de um idToken.
@@ -176,3 +180,4 @@ export async function revokeUserSessions(uid: string): Promise<void> {
 // ============================================
 
 export type { App, Auth, Firestore };
+export { Timestamp } from "firebase-admin/firestore";
